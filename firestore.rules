@@ -1,0 +1,9 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1주차 연결 테스트 전용. 4주차에 신청 컬렉션 규칙을 따로 작성한다.
+    match /connectionTests/{id} {
+      allow create: if true;
+    }
+  }
+}
