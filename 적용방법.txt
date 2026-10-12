@@ -1,0 +1,3 @@
+1. 이 zip을 풀어서 C:\woojin-coaching 에 덮어 복사 (public, src, firestore.rules)
+2. localhost:5173/kage 새로고침
+   /kage : 사원 버전(기본) / /kage?style=tactical : 전술 맵 버전 / /kage?original=1 : ThreeUI 원본

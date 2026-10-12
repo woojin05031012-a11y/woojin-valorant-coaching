@@ -1,0 +1,4 @@
+Kage landing page - ThreeUI (@designcodeio/threeui 1.2.0), MIT License, (c) Meng To.
+Three.js (three.min.js) - MIT License.
+Fonts (Onest, Noto Sans JP, wordmark font) - SIL Open Font License 1.1.
+Files in this folder are used unmodified. See the upstream package's LICENSE / ASSET-LICENSES.md for full text.

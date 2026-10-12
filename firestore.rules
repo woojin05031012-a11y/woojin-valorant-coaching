@@ -1,9 +1,22 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // 1주차 연결 테스트 전용. 4주차에 신청 컬렉션 규칙을 따로 작성한다.
+    // 1주차 연결 테스트 전용
     match /connectionTests/{id} {
       allow create: if true;
+    }
+    // 코칭 신청: 쓰기(생성)만 허용, 읽기/수정/삭제는 모두 막음 (신청 내용은 콘솔에서만 확인)
+    match /applications/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['nick','tier','agent','discord','problem','want','createdAt'])
+        && request.resource.data.keys().hasAll(['nick','tier','agent','discord','problem','want','createdAt'])
+        && request.resource.data.nick is string && request.resource.data.nick.size() > 0 && request.resource.data.nick.size() <= 1000
+        && request.resource.data.tier is string && request.resource.data.tier.size() > 0 && request.resource.data.tier.size() <= 20
+        && request.resource.data.agent is string && request.resource.data.agent.size() > 0 && request.resource.data.agent.size() <= 1000
+        && request.resource.data.discord is string && request.resource.data.discord.size() >= 2 && request.resource.data.discord.size() <= 32
+        && request.resource.data.problem is string && request.resource.data.problem.size() > 0 && request.resource.data.problem.size() <= 1000
+        && request.resource.data.want is string && request.resource.data.want.size() > 0 && request.resource.data.want.size() <= 1000
+        && request.resource.data.createdAt == request.time;
+      allow read, update, delete: if false;
     }
   }
 }
