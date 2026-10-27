@@ -947,6 +947,17 @@ body .card:nth-child(n) .card-fr{ height:auto !important; aspect-ratio:auto !imp
 .vids{ margin-top:clamp(40px,7vh,84px); position:relative; z-index:3; }
 .vids-head .k{ font-size:12px; letter-spacing:.2em; color:#f0b45a; }
 .vids-head h3{ margin:.6em 0 0; font-size:clamp(26px,3vw,44px); font-weight:600; line-height:1.25; }
+@media (max-width:560px){
+  .hero-side .v{ display:none !important; }
+  .hero-sub{ max-width:min(322px, calc(100vw - 48px)) !important; text-shadow:0 0 10px rgba(3,6,8,.95), 0 1px 26px rgba(3,6,8,.95) !important; }
+}
+@media (max-width:720px){
+  .foot-base{ display:flex !important; flex-direction:column; align-items:flex-start; gap:8px; }
+  .foot-base span{ text-align:left !important; white-space:normal; }
+  .foot-base span:empty{ display:none; }
+  .foot-grid, .foot-base{ z-index:6; }
+  .foot-base{ padding-bottom:clamp(90px,16vh,130px); }
+}
 .vids-note{ margin:.9em 0 0; font-size:clamp(14px,1.15vw,17px); color:#b4bfb7; }
 .vids-grid{ margin-top:clamp(20px,3vh,32px); display:grid; grid-template-columns:1fr 1fr; gap:clamp(16px,2.4vw,32px); }
 .vid{ margin:0; min-width:0; }
@@ -960,6 +971,34 @@ body .card:nth-child(n) .card-fr{ height:auto !important; aspect-ratio:auto !imp
 .vid-btn:focus-visible{ outline:2px solid #f0b45a; outline-offset:4px; }
 .vid figcaption{ margin-top:12px; font-size:clamp(14px,1.1vw,16px); line-height:1.6; color:#b4bfb7; }
 @media (max-width:900px){ .vids-grid{ grid-template-columns:1fr; } }
+.rev{ margin-top:clamp(56px,9vh,110px); position:relative; z-index:3; }
+.rev-head .k{ font-size:12px; letter-spacing:.2em; color:#f0b45a; }
+.rev-head h3{ margin:.6em 0 0; font-size:clamp(26px,3vw,44px); font-weight:600; line-height:1.25; }
+.rev-note{ margin:.9em 0 0; font-size:clamp(14px,1.15vw,17px); color:#b4bfb7; max-width:60ch; line-height:1.7; }
+.rev-list{ list-style:none; margin:clamp(20px,3vh,32px) 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr)); gap:clamp(14px,2vw,24px); }
+.rev-list li{ background:rgba(5,8,12,.6); border:1px solid var(--apply-line); border-radius:14px; padding:20px 22px; }
+.rev-list li.rev-empty{ grid-column:1 / -1; color:#9aa5a0; font-size:15px; background:transparent; border-style:dashed; }
+.rev-star{ color:#f0b45a; letter-spacing:.12em; font-size:17px; }
+.rev-star s{ text-decoration:none; color:rgba(223,231,224,.22); }
+.rev-text{ margin:.7em 0 0; font-size:15px; line-height:1.75; color:#dfe7e0; white-space:pre-wrap; overflow-wrap:anywhere; }
+.rev-by{ margin:.9em 0 0; font-size:13px; color:#9aa5a0; }
+.rev-form{ margin:18px 0 0; width:100%; max-width:none; }
+.rev-form[hidden]{ display:none !important; }
+.rev-toggle{ margin-top:clamp(24px,4vh,40px); display:inline-flex; align-items:center; gap:14px; cursor:pointer; font:inherit; font-size:15px; color:inherit;
+  background:transparent; border:1px solid var(--apply-line); border-radius:999px; padding:13px 22px; transition:border-color .2s, background .2s; position:relative; z-index:3; }
+.rev-toggle:hover{ border-color:#f0b45a; background:rgba(55,240,210,.07); }
+.rev-toggle i{ font-style:normal; font-size:22px; line-height:1; color:#f0b45a; transition:transform .25s; }
+.rev-toggle[aria-expanded=true] i{ transform:rotate(45deg); }
+.rev-toggle:focus-visible{ outline:2px solid #f0b45a; outline-offset:4px; }
+.rev-tier{ margin:.8em 0 0; font-size:13px; color:#f0b45a; letter-spacing:.02em; }
+.rev-form .lbl{ font-size:12px; letter-spacing:.04em; color:#b4bfb7; }
+.stars{ display:inline-flex; flex-direction:row-reverse; justify-content:flex-end; gap:2px; width:fit-content; }
+.stars input{ position:absolute; opacity:0; width:1px; height:1px; pointer-events:none; }
+.stars label{ font-size:34px !important; line-height:1; letter-spacing:0 !important; color:rgba(223,231,224,.25) !important; cursor:pointer; padding:2px 3px; transition:color .15s, transform .15s; }
+.stars label:hover, .stars label:hover ~ label, .stars input:checked ~ label{ color:#f0b45a !important; }
+.stars label:hover{ transform:scale(1.12); }
+.stars input:focus-visible + label{ outline:2px solid #f0b45a; outline-offset:2px; border-radius:6px; }
+.stars[aria-invalid=true] label{ color:rgba(255,70,85,.6) !important; }
 </style>
 </head>
 <body data-layout-hero="b" data-layout-story="b" data-layout-gallery="b"
@@ -1221,6 +1260,32 @@ body .card:nth-child(n) .card-fr{ height:auto !important; aspect-ratio:auto !imp
       <details><summary>코칭에서는 어떤 부분을 보나요?</summary>
         <p>에임, 포지셔닝, 스킬 활용, 상황 판단, 라운드 운영까지 신청자의 플레이에서 필요한 부분을 봅니다.</p></details>
     </div>
+  </div>
+  <div class="rev" id="reviews" data-rv="up">
+    <div class="rev-head"><span class="k">REVIEWS</span><h3>코칭 후기</h3>
+      <p class="rev-note">코칭을 받은 분이 남긴 후기입니다. 확인을 거친 후기만 공개하며, 별점이 낮은 후기도 숨기지 않습니다.</p></div>
+    <ul class="rev-list" id="rv-list" aria-live="polite"><li class="rev-empty">후기를 불러오는 중입니다.</li></ul>
+    <button type="button" class="rev-toggle" id="rv-toggle" aria-expanded="false" aria-controls="review-form"><span>후기 남기기</span><i aria-hidden="true">+</i></button>
+    <form class="apply rev-form" id="review-form" novalidate hidden>
+      <div class="f"><label for="rv-nick">닉네임 (실명은 쓰지 마세요)</label><input id="rv-nick" maxlength="20" autocomplete="off"><p class="err"></p></div>
+      <div class="f"><span class="lbl" id="rv-star-l">별점</span>
+        <div class="stars" role="radiogroup" aria-labelledby="rv-star-l">
+          <input type="radio" name="rv-rating" id="rv-s5" value="5"><label for="rv-s5" title="5점">&#9733;</label>
+          <input type="radio" name="rv-rating" id="rv-s4" value="4"><label for="rv-s4" title="4점">&#9733;</label>
+          <input type="radio" name="rv-rating" id="rv-s3" value="3"><label for="rv-s3" title="3점">&#9733;</label>
+          <input type="radio" name="rv-rating" id="rv-s2" value="2"><label for="rv-s2" title="2점">&#9733;</label>
+          <input type="radio" name="rv-rating" id="rv-s1" value="1"><label for="rv-s1" title="1점">&#9733;</label>
+        </div><p class="err"></p></div>
+      <div class="f"><label for="rv-tb">피드백 받기 전 티어</label>
+        <select id="rv-tb"><option value="">선택</option><option>아이언 1</option><option>아이언 2</option><option>아이언 3</option><option>브론즈 1</option><option>브론즈 2</option><option>브론즈 3</option><option>실버 1</option><option>실버 2</option><option>실버 3</option><option>골드 1</option><option>골드 2</option><option>골드 3</option><option>플래티넘 1</option><option>플래티넘 2</option><option>플래티넘 3</option><option>다이아몬드 1</option><option>다이아몬드 2</option><option>다이아몬드 3</option><option>초월자 1</option><option>초월자 2</option><option>초월자 3</option><option>불멸 1</option><option>불멸 2</option><option>불멸 3</option><option>레디언트</option></select><p class="err"></p></div>
+      <div class="f"><label for="rv-ta">피드백 받은 후 티어</label>
+        <select id="rv-ta"><option value="">선택</option><option>아이언 1</option><option>아이언 2</option><option>아이언 3</option><option>브론즈 1</option><option>브론즈 2</option><option>브론즈 3</option><option>실버 1</option><option>실버 2</option><option>실버 3</option><option>골드 1</option><option>골드 2</option><option>골드 3</option><option>플래티넘 1</option><option>플래티넘 2</option><option>플래티넘 3</option><option>다이아몬드 1</option><option>다이아몬드 2</option><option>다이아몬드 3</option><option>초월자 1</option><option>초월자 2</option><option>초월자 3</option><option>불멸 1</option><option>불멸 2</option><option>불멸 3</option><option>레디언트</option></select><p class="err"></p></div>
+      <div class="f full"><label for="rv-text">후기 (10~300자)</label><textarea id="rv-text" rows="4" maxlength="300"></textarea><p class="err"></p></div>
+      <div class="f full"><label class="consent" for="rv-consent"><input type="checkbox" id="rv-consent">
+        <span>작성한 후기를 닉네임과 함께 사이트에 공개하는 데 동의합니다. 제출한 후기는 확인 후에 공개됩니다.</span></label><p class="err"></p></div>
+      <div class="f full"><button class="cta apply-btn" type="submit"><i></i><span>후기 남기기</span></button>
+        <p class="apply-status" id="rv-status" role="status" aria-live="polite"></p></div>
+    </form>
   </div>
 </section>
 
@@ -4912,6 +4977,71 @@ else addEventListener('DOMContentLoaded', boot);
       f.referrerPolicy = 'strict-origin-when-cross-origin';
       btn.replaceWith(f);
     });
+  });
+})();
+</script>
+<script>
+/* reviews: list is read by the React host (only approved ones), new reviews are saved unapproved */
+(function () {
+  var list = document.getElementById('rv-list'), form = document.getElementById('review-form'); if (!list || !form) return;
+  var status = document.getElementById('rv-status'), btn = form.querySelector('button[type=submit]');
+  var stars = form.querySelector('.stars'), pending = null, timer = 0, tries = 0, got = false, lid = String(Date.now());
+  function say(t, cls) { status.textContent = t; status.className = 'apply-status' + (cls ? ' ' + cls : ''); }
+  function err(el, m) { var p = el.closest('.f').querySelector('.err'); if (p) p.textContent = m || ''; el.setAttribute('aria-invalid', m ? 'true' : 'false'); }
+  function render(items) {
+    list.textContent = '';
+    if (!items.length) { var e = document.createElement('li'); e.className = 'rev-empty'; e.textContent = '아직 공개된 후기가 없습니다. 코칭을 받으신 분은 아래에서 후기를 남겨 주세요.'; list.appendChild(e); return; }
+    items.forEach(function (r) {
+      var li = document.createElement('li'), st = document.createElement('div'), n = Math.max(1, Math.min(5, r.rating | 0));
+      st.className = 'rev-star'; st.setAttribute('aria-label', '별점 5점 중 ' + n + '점');
+      st.textContent = '★'.repeat(n); if (n < 5) { var d = document.createElement('s'); d.textContent = '★'.repeat(5 - n); st.appendChild(d); }
+      var tr = null;
+      if (r.tierBefore && r.tierAfter) { tr = document.createElement('p'); tr.className = 'rev-tier'; tr.textContent = '티어 ' + r.tierBefore + ' → ' + r.tierAfter; }
+      var t = document.createElement('p'); t.className = 'rev-text'; t.textContent = r.text;
+      var b = document.createElement('p'); b.className = 'rev-by'; b.textContent = r.nick;
+      li.appendChild(st); if (tr) li.appendChild(tr); li.appendChild(t); li.appendChild(b); list.appendChild(li);
+    });
+  }
+  function ask() {
+    if (got || window.parent === window) { if (window.parent === window) render([]); return; }
+    window.parent.postMessage({ type: 'woojin-reviews-get', id: lid }, location.origin);
+    if (++tries < 4) setTimeout(ask, 1500 * tries);
+    else if (!got) { list.textContent = ''; var e = document.createElement('li'); e.className = 'rev-empty'; e.textContent = '후기를 불러오지 못했습니다.'; list.appendChild(e); }
+  }
+  ask();
+  var tg = document.getElementById('rv-toggle');
+  tg.addEventListener('click', function () {
+    var open = form.hasAttribute('hidden');
+    if (open) form.removeAttribute('hidden'); else form.setAttribute('hidden', '');
+    tg.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) document.getElementById('rv-nick').focus({ preventScroll: true });
+  });
+  form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var nickEl = document.getElementById('rv-nick'), textEl = document.getElementById('rv-text'), c = document.getElementById('rv-consent');
+    var nick = nickEl.value.trim(), text = textEl.value.trim(), chk = form.querySelector('input[name=rv-rating]:checked'), first = null;
+    var m = !nick ? '닉네임을 입력해 주세요.' : nick.length > 20 ? '20자 이내로 입력해 주세요.' : ''; err(nickEl, m); if (m) first = nickEl;
+    var rm = chk ? '' : '별점을 선택해 주세요.'; err(stars, rm); stars.setAttribute('aria-invalid', rm ? 'true' : 'false'); if (rm && !first) first = stars.querySelector('input');
+    var tbEl = document.getElementById('rv-tb'), taEl = document.getElementById('rv-ta');
+    var bm = tbEl.value ? '' : '피드백 받기 전 티어를 선택해 주세요.'; err(tbEl, bm); if (bm && !first) first = tbEl;
+    var am = taEl.value ? '' : '피드백 받은 후 티어를 선택해 주세요.'; err(taEl, am); if (am && !first) first = taEl;
+    var tm = text.length < 10 ? '10자 이상 적어 주세요.' : text.length > 300 ? '300자 이내로 적어 주세요.' : ''; err(textEl, tm); if (tm && !first) first = textEl;
+    err(c, c.checked ? '' : '공개 동의에 체크해 주세요.'); if (!c.checked && !first) first = c;
+    if (first) { say(''); first.focus(); return; }
+    if (window.parent === window) { say('이 화면에서는 저장되지 않습니다. 사이트의 /kage 주소에서 남겨 주세요.', 'bad'); return; }
+    btn.disabled = true; say('저장 중...');
+    pending = String(Date.now()) + Math.random();
+    window.parent.postMessage({ type: 'woojin-review', id: pending, payload: { nick: nick, rating: parseInt(chk.value, 10), tierBefore: tbEl.value, tierAfter: taEl.value, text: text } }, location.origin);
+    clearTimeout(timer);
+    timer = setTimeout(function () { if (pending) { pending = null; btn.disabled = false; say('응답이 없습니다. 잠시 뒤 다시 시도해 주세요.', 'bad'); } }, 12000);
+  });
+  window.addEventListener('message', function (e) {
+    var d = e.data; if (e.origin !== location.origin || !d) return;
+    if (d.type === 'woojin-reviews-result' && d.id === lid) { got = true; render(Array.isArray(d.items) ? d.items : []); return; }
+    if (d.type !== 'woojin-review-result' || d.id !== pending) return;
+    pending = null; clearTimeout(timer); btn.disabled = false;
+    if (d.ok) { say('후기가 접수되었습니다. 확인 후 공개됩니다. 감사합니다.', 'ok'); form.reset(); }
+    else say(d.message || '저장에 실패했습니다. 잠시 뒤 다시 시도해 주세요.', 'bad');
   });
 })();
 </script>
