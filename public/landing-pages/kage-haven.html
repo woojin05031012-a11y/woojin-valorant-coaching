@@ -930,6 +930,36 @@ body .card:nth-child(n) .card-fr{ height:auto !important; aspect-ratio:auto !imp
 .card-tx li{ position:relative; padding-left:1.1em; font-size:clamp(12px,1.05vw,15px); line-height:1.55; color:rgba(223,231,224,.78); }
 .card-tx li::before{ content:''; position:absolute; left:0; top:.7em; width:.45em; height:1px; background:#f0b45a; }
 .card-fr .glow{ display:none; }
+.faq{ margin-top:clamp(40px,7vh,84px); display:grid; grid-template-columns:minmax(0,.5fr) minmax(0,1fr); gap:clamp(24px,5vw,80px); position:relative; z-index:3; }
+.faq-head h3{ margin:.6em 0 0; font-size:clamp(26px,3vw,44px); font-weight:600; line-height:1.25; }
+.faq-head .k{ font-size:12px; letter-spacing:.2em; color:#f0b45a; }
+.faq-list{ border-top:1px solid var(--apply-line); }
+.faq details{ border-bottom:1px solid var(--apply-line); }
+.faq summary{ list-style:none; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:18px;
+  padding:clamp(16px,2.2vh,24px) 0; font-size:clamp(16px,1.35vw,20px); font-weight:500; }
+.faq summary::-webkit-details-marker{ display:none; }
+.faq summary::after{ content:'+'; flex:none; font-weight:300; font-size:26px; line-height:1; color:#f0b45a; transition:transform .25s; }
+.faq details[open] summary::after{ transform:rotate(45deg); }
+.faq details p{ margin:0; padding:0 0 clamp(16px,2.2vh,24px); font-size:clamp(14px,1.1vw,16px); line-height:1.75; color:#b4bfb7; max-width:60ch; }
+.faq summary:focus-visible{ outline:2px solid #f0b45a; outline-offset:4px; }
+@media (max-width:900px){ .faq{ grid-template-columns:1fr; gap:18px; } }
+.sec#lessons{ padding-bottom:clamp(110px,16vh,190px); }
+.vids{ margin-top:clamp(40px,7vh,84px); position:relative; z-index:3; }
+.vids-head .k{ font-size:12px; letter-spacing:.2em; color:#f0b45a; }
+.vids-head h3{ margin:.6em 0 0; font-size:clamp(26px,3vw,44px); font-weight:600; line-height:1.25; }
+.vids-note{ margin:.9em 0 0; font-size:clamp(14px,1.15vw,17px); color:#b4bfb7; }
+.vids-grid{ margin-top:clamp(20px,3vh,32px); display:grid; grid-template-columns:1fr 1fr; gap:clamp(16px,2.4vw,32px); }
+.vid{ margin:0; min-width:0; }
+.vid-btn, .vid iframe{ display:block; width:100%; aspect-ratio:16 / 9; border:1px solid var(--apply-line); border-radius:14px; overflow:hidden; background:#070b12; }
+.vid-btn{ position:relative; padding:0; cursor:pointer; }
+.vid-btn img{ width:100%; height:100%; object-fit:cover; display:block; opacity:.82; transition:opacity .25s, transform .4s; }
+.vid-btn:hover img{ opacity:1; transform:scale(1.02); }
+.vid-play{ position:absolute; left:50%; top:50%; width:64px; height:64px; margin:-32px 0 0 -32px; border-radius:50%;
+  display:grid; place-items:center; background:rgba(5,8,12,.62); border:1px solid rgba(223,231,224,.5); }
+.vid-play svg{ width:26px; height:26px; }
+.vid-btn:focus-visible{ outline:2px solid #f0b45a; outline-offset:4px; }
+.vid figcaption{ margin-top:12px; font-size:clamp(14px,1.1vw,16px); line-height:1.6; color:#b4bfb7; }
+@media (max-width:900px){ .vids-grid{ grid-template-columns:1fr; } }
 </style>
 </head>
 <body data-layout-hero="b" data-layout-story="b" data-layout-gallery="b"
@@ -1048,6 +1078,25 @@ body .card:nth-child(n) .card-fr{ height:auto !important; aspect-ratio:auto !imp
     <div><b>60분</b><span>1회 시간</span></div>
     <div><b>Radiant</b><span>현재 티어</span></div>
   </div>
+  <div class="vids" data-rv="up">
+    <div class="vids-head"><span class="k">VIDEO</span><h3>실전 강의 영상</h3><p class="vids-note">채널에서 운영하는 강의 영상입니다.</p></div>
+    <div class="vids-grid">
+      <figure class="vid" data-yt="Du33Hr0-CsE" data-start="0">
+        <button type="button" class="vid-btn" aria-label="영상 재생: 따라하기만 해도 티어가 달라지는" data-cursor>
+          <img src="https://i.ytimg.com/vi/Du33Hr0-CsE/hqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
+          <span class="vid-play"><svg viewBox="0 0 22 22" fill="none"><path d="M8 5.6 16.4 11 8 16.4z" fill="#dfe7e0"/></svg></span>
+        </button>
+        <figcaption>[실전강의] 따라하기만 해도 티어가 달라지는</figcaption>
+      </figure>
+      <figure class="vid" data-yt="wK0nnEghZNU" data-start="302">
+        <button type="button" class="vid-btn" aria-label="영상 재생: 알고 있으면 티어 무조건 상승하는" data-cursor>
+          <img src="https://i.ytimg.com/vi/wK0nnEghZNU/hqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
+          <span class="vid-play"><svg viewBox="0 0 22 22" fill="none"><path d="M8 5.6 16.4 11 8 16.4z" fill="#dfe7e0"/></svg></span>
+        </button>
+        <figcaption>[실전강의] 알고 있으면 티어 무조건 상승하는</figcaption>
+      </figure>
+    </div>
+  </div>
 </section>
 
 <!-- ============================================================ chapter II -->
@@ -1150,6 +1199,27 @@ body .card:nth-child(n) .card-fr{ height:auto !important; aspect-ratio:auto !imp
       <h3>가격</h3>
       <p>1회 25,000원입니다.</p>
       <span class="t">25,000원</span><i class="bar"></i>
+    </div>
+  </div>
+  <div class="faq" id="faq" data-rv="up">
+    <div class="faq-head"><span class="k">FAQ</span><h3>자주 묻는 질문</h3></div>
+    <div class="faq-list">
+      <details><summary>어떤 티어든 신청할 수 있나요?</summary>
+        <p>티어 제한 없이 신청할 수 있습니다. 신청서에 현재 티어를 적어 주시면 그에 맞춰 플레이를 봅니다.</p></details>
+      <details><summary>코칭은 어떻게 진행되나요?</summary>
+        <p>1:1로 Discord 음성 통화와 화면 공유를 이용해 진행합니다.</p></details>
+      <details><summary>진행 방식에는 어떤 것이 있나요?</summary>
+        <p>실시간 랭크, 리플레이, 녹화본 세 가지입니다. 어떤 방식으로 할지는 Discord에서 일정과 함께 정합니다.</p></details>
+      <details><summary>시간과 가격은 어떻게 되나요?</summary>
+        <p>1회 60분이며, 가격은 25,000원입니다.</p></details>
+      <details><summary>신청하면 어떻게 진행되나요?</summary>
+        <p>신청서를 확인한 뒤, 신청 당일에서 24시간 이내에 Discord로 먼저 연락드립니다. 그 자리에서 일정과 진행 방식을 정합니다.</p></details>
+      <details><summary>일정은 변경할 수 있나요?</summary>
+        <p>코칭 이틀 전까지 변경할 수 있습니다.</p></details>
+      <details><summary>신청서에는 무엇을 적어야 하나요?</summary>
+        <p>발로란트 닉네임, 현재 티어, 주 요원 또는 포지션, Discord ID, 고민하고 있는 부분과 피드백받고 싶은 내용을 적어 주세요. 전화번호와 주소는 받지 않습니다.</p></details>
+      <details><summary>코칭에서는 어떤 부분을 보나요?</summary>
+        <p>에임, 포지셔닝, 스킬 활용, 상황 판단, 라운드 운영까지 신청자의 플레이에서 필요한 부분을 봅니다.</p></details>
     </div>
   </div>
 </section>
@@ -4826,6 +4896,22 @@ else addEventListener('DOMContentLoaded', boot);
     pending = null; clearTimeout(timer); btn.disabled = false;
     if (d.ok) { say('신청이 접수되었습니다. 확인 후 Discord로 먼저 연락드리겠습니다.', 'ok'); form.reset(); }
     else say(d.message || '저장에 실패했습니다. 잠시 뒤 다시 시도해 주세요.', 'bad');
+  });
+})();
+</script>
+<script>
+/* YouTube: show a thumbnail first, load the player only when clicked */
+(function () {
+  document.querySelectorAll('.vid[data-yt]').forEach(function (fig) {
+    var btn = fig.querySelector('.vid-btn'); if (!btn) return;
+    btn.addEventListener('click', function () {
+      var id = fig.getAttribute('data-yt'), st = parseInt(fig.getAttribute('data-start') || '0', 10);
+      var f = document.createElement('iframe');
+      f.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0' + (st ? '&start=' + st : '');
+      f.title = '유튜브 영상'; f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'; f.allowFullscreen = true;
+      f.referrerPolicy = 'strict-origin-when-cross-origin';
+      btn.replaceWith(f);
+    });
   });
 })();
 </script>
