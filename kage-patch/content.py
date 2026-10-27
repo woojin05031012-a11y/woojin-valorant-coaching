@@ -409,6 +409,28 @@ body .card:nth-child(n) .card-fr{ height:auto !important; aspect-ratio:auto !imp
 .rev-toggle i{ font-style:normal; font-size:22px; line-height:1; color:#37f0d2; transition:transform .25s; }
 .rev-toggle[aria-expanded=true] i{ transform:rotate(45deg); }
 .rev-toggle:focus-visible{ outline:2px solid #37f0d2; outline-offset:4px; }
+.sg{ position:fixed; left:50%; bottom:clamp(22px,4.5vh,44px); transform:translateX(-50%); z-index:60; display:flex; flex-direction:column; align-items:center; gap:10px;
+  padding:12px 20px 10px; background:rgba(5,8,12,.55); border:1px solid rgba(223,231,224,.28); border-radius:999px; color:#dfe7e0; cursor:pointer;
+  font:inherit; font-size:14px; letter-spacing:.02em; opacity:0; pointer-events:none; transition:opacity .6s, transform .6s; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
+.sg.on{ opacity:1; pointer-events:auto; }
+.sg.off{ opacity:0 !important; pointer-events:none !important; transform:translateX(-50%) translateY(10px); }
+.sg:hover{ border-color:#37f0d2; }
+.sg:focus-visible{ outline:2px solid #37f0d2; outline-offset:4px; }
+.sg-ico{ position:relative; width:22px; height:34px; border:2px solid #dfe7e0; border-radius:12px; }
+.sg-ico i{ position:absolute; left:50%; top:6px; width:3px; height:7px; margin-left:-1.5px; border-radius:2px; background:#37f0d2; animation:sgwheel 1.6s ease-in-out infinite; }
+.sg-chev{ display:flex; flex-direction:column; align-items:center; margin-top:-2px; }
+.sg-chev b{ width:9px; height:9px; border-right:2px solid #37f0d2; border-bottom:2px solid #37f0d2; transform:rotate(45deg); margin-top:-4px; opacity:0; animation:sgchev 1.6s ease-in-out infinite; }
+.sg-chev b:nth-child(2){ animation-delay:.2s; }
+.sg-txt{ white-space:nowrap; }
+.sg .t-touch{ display:none; }
+@media (pointer:coarse){ .sg .t-touch{ display:inline; } .sg .t-mouse{ display:none; } .sg-ico{ animation:sgswipe 1.8s ease-in-out infinite; } .sg-ico i{ animation:none; } }
+@media (max-width:720px){ .sg{ flex-direction:row; gap:10px; padding:10px 18px; font-size:13.5px; } .sg-ico, .sg-chev{ display:none; }
+  .sg::before{ content:'↓'; font-size:18px; line-height:1; color:#37f0d2; animation:sgbob 1.2s ease-in-out infinite; } }
+@keyframes sgwheel{ 0%{ opacity:0; transform:translateY(0); } 30%{ opacity:1; } 100%{ opacity:0; transform:translateY(12px); } }
+@keyframes sgchev{ 0%{ opacity:0; } 40%{ opacity:1; } 100%{ opacity:0; transform:rotate(45deg) translate(4px,4px); } }
+@keyframes sgswipe{ 0%,100%{ transform:translateY(4px); } 50%{ transform:translateY(-6px); } }
+@keyframes sgbob{ 0%,100%{ transform:translateY(-2px); } 50%{ transform:translateY(3px); } }
+@media (prefers-reduced-motion:reduce){ .sg-ico i, .sg-chev b, .sg-ico, .sg::before{ animation:none !important; } .sg-chev b{ opacity:1; } }
 .rev-tier{ margin:.8em 0 0; font-size:13px; color:#37f0d2; letter-spacing:.02em; }
 .rev-form .lbl{ font-size:12px; letter-spacing:.04em; color:#b4bfb7; }
 .stars{ display:inline-flex; flex-direction:row-reverse; justify-content:flex-end; gap:2px; width:fit-content; }
@@ -534,6 +556,33 @@ RJS = '''<script>
 })();
 </script>
 '''
+SGJS = '''<script>
+/* scroll guide: shown on the first screen until the visitor scrolls; click scrolls down one screen */
+(function () {
+  var g = document.createElement('button'); g.type = 'button'; g.className = 'sg'; g.setAttribute('data-cursor', '');
+  g.setAttribute('aria-label', '아래로 스크롤');
+  g.innerHTML = '<span class="sg-ico" aria-hidden="true"><i></i></span><span class="sg-chev" aria-hidden="true"><b></b><b></b></span>' +
+    '<span class="sg-txt"><span class="t-mouse">마우스 휠을 아래로 굴려 보세요</span><span class="t-touch">화면을 위로 밀어 올려 보세요</span></span>';
+  document.body.appendChild(g);
+  var chips = document.getElementById('chips'), gone = false, shown = false;
+  function place() {
+    if (gone) return;
+    if (window.innerWidth <= 720 && chips) { var r = chips.getBoundingClientRect(); g.style.bottom = Math.max(16, window.innerHeight - r.top + 12) + 'px'; }
+    else g.style.bottom = '';
+  }
+  function hide() { if (gone) return; gone = true; g.classList.remove('on'); g.classList.add('off'); setTimeout(function () { g.remove(); }, 800); }
+  function check() { if ((window.scrollY || document.documentElement.scrollTop) > 40) hide(); }
+  addEventListener('scroll', check, { passive: true });
+  addEventListener('wheel', function (e) { if (e.deltaY > 0) hide(); }, { passive: true });
+  addEventListener('touchmove', hide, { passive: true });
+  addEventListener('keydown', function (e) { if (/^(ArrowDown|PageDown| |End)$/.test(e.key)) hide(); });
+  addEventListener('resize', place);
+  g.addEventListener('click', function () { hide(); scrollTo({ top: Math.round(window.innerHeight * 0.95), behavior: 'smooth' }); });
+  setTimeout(function () { if (gone) return; place(); g.classList.add('on'); shown = true; }, 3200);
+  setTimeout(function () { if (shown && !gone) place(); }, 5000);
+})();
+</script>
+'''
 VJS = '''<script>
 /* YouTube: show a thumbnail first, load the player only when clicked */
 (function () {
@@ -552,6 +601,6 @@ VJS = '''<script>
 </script>
 '''
 i = s.rindex('</body>')
-s = s[:i] + JS + VJS + RJS + s[i:]
+s = s[:i] + JS + VJS + RJS + SGJS + s[i:]
 open(P, 'w', encoding='utf-8').write(s)
 print('ok', len(s))
