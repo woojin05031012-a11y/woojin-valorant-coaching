@@ -933,7 +933,33 @@ body .card:nth-child(n) .card-fr{ height:auto !important; aspect-ratio:auto !imp
 .faq{ margin-top:clamp(40px,7vh,84px); display:grid; grid-template-columns:minmax(0,.5fr) minmax(0,1fr); gap:clamp(24px,5vw,80px); position:relative; z-index:3; }
 .faq-head h3{ margin:.6em 0 0; font-size:clamp(26px,3vw,44px); font-weight:600; line-height:1.25; }
 .faq-head .k{ font-size:12px; letter-spacing:.2em; color:#f0b45a; }
+.faq-body{ min-width:0; }
 .faq-list{ border-top:1px solid var(--apply-line); }
+.faq-meta{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; padding:0 0 clamp(16px,2.2vh,24px); font-size:13px; color:#8e9a94; }
+.faq-vote{ font:inherit; font-size:13px; cursor:pointer; color:#dfe7e0; background:transparent; border:1px solid var(--apply-line); border-radius:999px; padding:6px 14px; }
+.faq-vote:hover:not([disabled]){ border-color:#f0b45a; }
+.faq-vote[disabled]{ opacity:.6; cursor:default; color:#f0b45a; border-color:#f0b45a; }
+.faq-more, .faq-ask-btn{ margin-top:18px; display:inline-flex; align-items:center; gap:12px; cursor:pointer; font:inherit; font-size:14.5px; color:inherit;
+  background:transparent; border:1px solid var(--apply-line); border-radius:999px; padding:11px 20px; position:relative; z-index:3; }
+.faq-more:hover, .faq-ask-btn:hover{ border-color:#f0b45a; background:rgba(55,240,210,.07); }
+.faq-more[hidden]{ display:none; }
+.faq-ask{ display:block; }
+.faq-ask-btn i{ font-style:normal; font-size:20px; line-height:1; color:#f0b45a; transition:transform .25s; }
+.faq-ask-btn[aria-expanded=true] i{ transform:rotate(45deg); }
+.faq-more:focus-visible, .faq-ask-btn:focus-visible, .faq-vote:focus-visible{ outline:2px solid #f0b45a; outline-offset:4px; }
+#faq-ask-form{ margin-top:16px; display:flex; flex-direction:column; gap:8px; max-width:60ch; position:relative; z-index:3; }
+#faq-ask-form[hidden]{ display:none; }
+#faq-ask-form label{ font-size:12px; letter-spacing:.04em; color:#b4bfb7; }
+#faq-ask-form textarea{ font:inherit; font-size:16px; color:var(--bone,#dfe7e0); background:rgba(255,255,255,.04); border:1px solid var(--apply-line); border-radius:10px; padding:12px 14px; outline:none; width:100%; box-sizing:border-box; resize:vertical; }
+#faq-ask-form textarea:focus{ border-color:#f0b45a; box-shadow:0 0 0 3px rgba(240,180,90,.18); }
+.faq-ask-row{ display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
+.faq-ask-row .apply-status{ margin:0; }
+.ap-ref{ display:flex; flex-direction:column; gap:10px; align-items:flex-start; }
+.ap-ref .code{ font-family:ui-monospace,Menlo,Consolas,monospace; font-size:15px; background:rgba(255,255,255,.08); padding:6px 12px; border-radius:8px; overflow-wrap:anywhere; color:#dfe7e0; }
+.ap-ref a{ color:#f0b45a; }
+.ap-ref button{ font:inherit; font-size:13px; cursor:pointer; color:#dfe7e0; background:transparent; border:1px solid var(--apply-line); border-radius:999px; padding:5px 13px; }
+.apply-check{ margin:14px 0 0; font-size:14px; color:#9aa5a0; }
+.apply-check a{ color:#f0b45a; }
 .faq details{ border-bottom:1px solid var(--apply-line); }
 .faq summary{ list-style:none; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:18px;
   padding:clamp(16px,2.2vh,24px) 0; font-size:clamp(16px,1.35vw,20px); font-weight:500; }
@@ -1264,7 +1290,8 @@ body .card:nth-child(n) .card-fr{ height:auto !important; aspect-ratio:auto !imp
   </div>
   <div class="faq" id="faq" data-rv="up">
     <div class="faq-head"><span class="k">FAQ</span><h3>자주 묻는 질문</h3></div>
-    <div class="faq-list">
+    <div class="faq-body">
+    <div class="faq-list" id="faq-list">
       <details><summary>어떤 티어든 신청할 수 있나요?</summary>
         <p>티어 제한 없이 신청할 수 있습니다. 신청서에 현재 티어를 적어 주시면 그에 맞춰 플레이를 봅니다.</p></details>
       <details><summary>코칭은 어떻게 진행되나요?</summary>
@@ -1281,6 +1308,16 @@ body .card:nth-child(n) .card-fr{ height:auto !important; aspect-ratio:auto !imp
         <p>발로란트 닉네임, 현재 티어, 주 요원 또는 포지션, Discord ID, 고민하고 있는 부분과 피드백받고 싶은 내용을 적어 주세요. 전화번호와 주소는 받지 않습니다.</p></details>
       <details><summary>코칭에서는 어떤 부분을 보나요?</summary>
         <p>에임, 포지셔닝, 스킬 활용, 상황 판단, 라운드 운영까지 신청자의 플레이에서 필요한 부분을 봅니다.</p></details>
+    </div>
+    <button type="button" class="faq-more" id="faq-more" hidden></button>
+    <div class="faq-ask">
+      <button type="button" class="faq-ask-btn" id="faq-ask-btn" aria-expanded="false" aria-controls="faq-ask-form"><span>찾는 답이 없나요? 질문 남기기</span><i aria-hidden="true">+</i></button>
+      <form id="faq-ask-form" hidden novalidate>
+        <label for="faq-ask-q">궁금한 점 (5~200자)</label>
+        <textarea id="faq-ask-q" rows="3" maxlength="200"></textarea>
+        <div class="faq-ask-row"><button class="cta apply-btn" type="submit"><i></i><span>질문 보내기</span></button><p class="apply-status" id="faq-ask-status" role="status" aria-live="polite"></p></div>
+      </form>
+    </div>
     </div>
   </div>
   <div class="rev" id="reviews" data-rv="up">
@@ -1331,6 +1368,7 @@ body .card:nth-child(n) .card-fr{ height:auto !important; aspect-ratio:auto !imp
   <div class="eyebrow" data-rv="fade">Chapter 04 — 신청</div>
   <h2 class="display" data-rv="up">코칭 신청</h2>
   <p class="body-lg" data-rv="up">신청서를 보내주시면 내용을 확인한 뒤 Discord로 먼저 연락드립니다. 1회 60분, 25,000원입니다.</p>
+  <p class="apply-check" data-rv="up">이미 신청하셨나요? <a href="/check" target="_top" data-cursor>신청 번호로 확인·수정하기</a></p>
   <form class="apply" id="apply" data-rv="up" novalidate>
     <div class="f"><label for="ap-nick">발로란트 닉네임</label><input id="ap-nick" name="nick" autocomplete="off"><p class="err"></p></div>
     <div class="f"><label for="ap-tier">현재 티어</label>
@@ -1375,6 +1413,7 @@ body .card:nth-child(n) .card-fr{ height:auto !important; aspect-ratio:auto !imp
       <li><a href="#pathways" data-cursor>코칭 범위</a></li>
       <li><a href="#lessons" data-cursor>코칭 안내</a></li>
       <li><a href="#eternity" data-cursor>신청</a></li>
+      <li><a href="/check" target="_top" data-cursor>신청 확인·수정</a></li>
     </ul></div>
     <div><h4>채널</h4><ul>
       <li><a href="https://www.youtube.com/@Woojinvlrt" target="_blank" rel="noopener" data-cursor>YouTube 이우진</a></li>
@@ -4981,7 +5020,18 @@ else addEventListener('DOMContentLoaded', boot);
     var d = e.data;
     if (e.origin !== location.origin || !d || d.type !== 'woojin-apply-result' || d.id !== pending) return;
     pending = null; clearTimeout(timer); btn.disabled = false;
-    if (d.ok) { say('신청이 접수되었습니다. 확인 후 Discord로 먼저 연락드리겠습니다.', 'ok'); form.reset(); }
+    if (d.ok) {
+      form.reset(); say('', 'ok');
+      var box = document.createElement('span'); box.className = 'ap-ref';
+      var t1 = document.createElement('span'); t1.textContent = '신청이 접수되었습니다. 확인 후 Discord로 먼저 연락드리겠습니다.';
+      var t2 = document.createElement('span'); t2.textContent = '아래 신청 번호를 꼭 저장해 두세요. 신청 내용을 확인하거나 수정할 때 필요합니다.';
+      var cd = document.createElement('span'); cd.className = 'code'; cd.textContent = d.ref || '';
+      var cp = document.createElement('button'); cp.type = 'button'; cp.textContent = '번호 복사';
+      cp.addEventListener('click', function () { try { navigator.clipboard.writeText(d.ref || ''); cp.textContent = '복사했습니다'; } catch (e) { cp.textContent = '직접 선택해 복사해 주세요'; } });
+      var ln = document.createElement('a'); ln.href = '/check?code=' + encodeURIComponent(d.ref || ''); ln.target = '_top'; ln.textContent = '신청 확인·수정 페이지로 가기';
+      box.appendChild(t1); box.appendChild(t2); box.appendChild(cd); box.appendChild(cp); box.appendChild(ln);
+      status.textContent = ''; status.appendChild(box);
+    }
     else say(d.message || '저장에 실패했습니다. 잠시 뒤 다시 시도해 주세요.', 'bad');
   });
 })();
@@ -5064,6 +5114,80 @@ else addEventListener('DOMContentLoaded', boot);
     pending = null; clearTimeout(timer); btn.disabled = false;
     if (d.ok) { say('후기가 접수되었습니다. 확인 후 공개됩니다. 감사합니다.', 'ok'); form.reset(); }
     else say(d.message || '저장에 실패했습니다. 잠시 뒤 다시 시도해 주세요.', 'bad');
+  });
+})();
+</script>
+<script>
+/* FAQ: loaded from the database by the React host. The static items stay as a fallback until the database has published ones. */
+(function () {
+  var list = document.getElementById('faq-list'); if (!list) return;
+  var more = document.getElementById('faq-more'), askBtn = document.getElementById('faq-ask-btn'), askForm = document.getElementById('faq-ask-form');
+  var askQ = document.getElementById('faq-ask-q'), askSt = document.getElementById('faq-ask-status');
+  var TOP = 10, items = [], expanded = false, got = false, tries = 0, lid = 'faq' + Date.now(), pending = null, askTimer = 0;
+  var viewed = {}, voted = {};
+  try { voted = JSON.parse(localStorage.getItem('woojin-faq-voted') || '{}') || {}; } catch (e) { voted = {}; }
+  function post(m) { if (window.parent !== window) window.parent.postMessage(m, location.origin); }
+  function build(it) {
+    var d = document.createElement('details'), s = document.createElement('summary'), p = document.createElement('p'), meta = document.createElement('div');
+    s.textContent = it.q; p.textContent = it.a; meta.className = 'faq-meta';
+    var cnt = document.createElement('span'), vb = document.createElement('button');
+    function paint() { cnt.textContent = '조회 ' + it.views; vb.textContent = voted[it.id] ? '도움이 됐어요 ' + it.votes + ' ✓' : '도움이 됐어요 ' + it.votes; vb.disabled = !!voted[it.id]; }
+    vb.type = 'button'; vb.className = 'faq-vote';
+    vb.addEventListener('click', function () {
+      if (voted[it.id]) return; voted[it.id] = 1; it.votes++;
+      try { localStorage.setItem('woojin-faq-voted', JSON.stringify(voted)); } catch (e) {}
+      post({ type: 'woojin-faq-vote', id: 'v' + Date.now(), faq: it.id }); paint();
+    });
+    paint(); meta.appendChild(cnt); meta.appendChild(vb);
+    d.appendChild(s); d.appendChild(p); d.appendChild(meta);
+    d.addEventListener('toggle', function () {
+      if (d.open && !viewed[it.id]) { viewed[it.id] = 1; it.views++; post({ type: 'woojin-faq-view', id: 'w' + Date.now(), faq: it.id }); paint(); }
+    });
+    return d;
+  }
+  function render() {
+    list.textContent = '';
+    var n = expanded ? items.length : Math.min(TOP, items.length);
+    for (var i = 0; i < n; i++) list.appendChild(build(items[i]));
+    if (items.length > TOP && !expanded) { more.hidden = false; more.textContent = '질문 더 보기 (' + (items.length - TOP) + ')'; } else more.hidden = true;
+  }
+  more.addEventListener('click', function () { expanded = true; render(); });
+  function ask() {
+    if (got || window.parent === window) return;
+    post({ type: 'woojin-faqs-get', id: lid });
+    if (++tries < 4) setTimeout(ask, 1500 * tries);
+  }
+  ask();
+  askBtn.addEventListener('click', function () {
+    var open = askForm.hasAttribute('hidden');
+    if (open) askForm.removeAttribute('hidden'); else askForm.setAttribute('hidden', '');
+    askBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) askQ.focus({ preventScroll: true });
+  });
+  function say(t, c) { askSt.textContent = t; askSt.className = 'apply-status' + (c ? ' ' + c : ''); }
+  askForm.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var q = askQ.value.trim();
+    if (q.length < 5) { say('질문을 5자 이상 적어 주세요.', 'bad'); askQ.focus(); return; }
+    if (window.parent === window) { say('이 화면에서는 저장되지 않습니다. 사이트의 /kage 주소에서 남겨 주세요.', 'bad'); return; }
+    var b = askForm.querySelector('button[type=submit]'); b.disabled = true; say('보내는 중...');
+    pending = 'q' + Date.now() + Math.random();
+    post({ type: 'woojin-faq-ask', id: pending, payload: { q: q } });
+    clearTimeout(askTimer);
+    askTimer = setTimeout(function () { if (pending) { pending = null; b.disabled = false; say('응답이 없습니다. 잠시 뒤 다시 시도해 주세요.', 'bad'); } }, 12000);
+  });
+  window.addEventListener('message', function (e) {
+    var d = e.data; if (e.origin !== location.origin || !d) return;
+    if (d.type === 'woojin-faqs-result' && d.id === lid) {
+      got = true;
+      if (Array.isArray(d.items) && d.items.length) { items = d.items; render(); }
+      return;
+    }
+    if (d.type === 'woojin-faq-ask-result' && d.id === pending) {
+      pending = null; clearTimeout(askTimer); askForm.querySelector('button[type=submit]').disabled = false;
+      if (d.ok) { say('질문이 접수되었습니다. 답변이 등록되면 FAQ에 올라옵니다.', 'ok'); askQ.value = ''; }
+      else say(d.message || '저장에 실패했습니다. 잠시 뒤 다시 시도해 주세요.', 'bad');
+    }
   });
 })();
 </script>
