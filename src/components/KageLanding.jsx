@@ -39,6 +39,16 @@ function cleanReview(payload) {
   return { nick, rating, text, tierBefore, tierAfter }
 }
 
+// 저장이 끝난 뒤 디스코드 알림을 요청한다. 실패해도 사용자 화면에는 아무 영향이 없다.
+function notify(kind, id) {
+  try {
+    fetch('/api/notify', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ kind, id }), keepalive: true,
+    }).catch(() => {})
+  } catch (err) { /* 알림 실패는 무시 */ }
+}
+
 export default function KageLanding() {
   const q = new URLSearchParams(window.location.search)
   const src = q.get('original') === '1' ? '/landing-pages/kage.html'
@@ -61,6 +71,7 @@ export default function KageLanding() {
           const ref = await addDoc(collection(db, 'applications'), {
             ...data, status: '접수', createdAt: serverTimestamp(), updatedAt: serverTimestamp(),
           })
+          notify('application', ref.id)
           send({ type: 'woojin-apply-result', ok: true, ref: ref.id })
         } catch (err) {
           send({ type: 'woojin-apply-result', ok: false, message: '저장 실패: ' + (err.code || err.message) })
@@ -92,7 +103,8 @@ export default function KageLanding() {
         if (!data) return send({ type: 'woojin-review-result', ok: false, message: '입력 내용을 다시 확인해 주세요.' })
         if (!configured) return send({ type: 'woojin-review-result', ok: false, message: 'Firebase 설정(.env)이 없어 저장할 수 없습니다.' })
         try {
-          await addDoc(collection(db, 'reviews'), { ...data, approved: false, createdAt: serverTimestamp() })
+          const ref = await addDoc(collection(db, 'reviews'), { ...data, approved: false, createdAt: serverTimestamp() })
+          notify('review', ref.id)
           send({ type: 'woojin-review-result', ok: true })
         } catch (err) {
           send({ type: 'woojin-review-result', ok: false, message: '저장 실패: ' + (err.code || err.message) })
@@ -132,9 +144,10 @@ export default function KageLanding() {
         if (text.length < 5 || text.length > 200) return send({ type: 'woojin-faq-ask-result', ok: false, message: '질문은 5~200자로 적어 주세요.' })
         if (!configured) return send({ type: 'woojin-faq-ask-result', ok: false, message: 'Firebase 설정(.env)이 없어 저장할 수 없습니다.' })
         try {
-          await addDoc(collection(db, 'faqs'), {
+          const ref = await addDoc(collection(db, 'faqs'), {
             q: text, a: '', views: 0, votes: 0, published: false, source: 'user', createdAt: serverTimestamp(),
           })
+          notify('faq', ref.id)
           send({ type: 'woojin-faq-ask-result', ok: true })
         } catch (err) {
           send({ type: 'woojin-faq-ask-result', ok: false, message: '저장 실패: ' + (err.code || err.message) })
