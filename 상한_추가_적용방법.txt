@@ -1,0 +1,10 @@
+[알림 상한 추가 패치]
+1. 압축을 풀어 api/notify.js 를 C:\woojin-coaching\api\notify.js 에 덮어쓴다 (이 파일 하나만 바뀜)
+2. 터미널(C:\woojin-coaching):
+     git add .
+     git commit -m "Add Discord alert rate limit"
+     git push
+3. Vercel Deployments 에서 Ready 확인 (환경변수는 새로 넣을 것 없음)
+
+동작: 최근 1시간에 보낸 알림이 30건이 넘으면 그 뒤 알림은 보내지 않는다. 신청·후기·질문은 정상 저장되고 /admin 에서 모두 보인다.
+상한을 바꾸려면 Vercel 환경변수 ALERT_LIMIT_PER_HOUR 에 숫자를 넣고 Redeploy (안 넣으면 30).

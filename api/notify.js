@@ -8,6 +8,8 @@
 const COLLECTIONS = { application: 'applications', review: 'reviews', faq: 'faqs' }
 const ID_RE = /^[A-Za-z0-9]{1,40}$/
 const MAX_AGE_MS = 15 * 60 * 1000 // 저장된 지 15분 안의 문서만 알림
+const DEFAULT_LIMIT = 30 // 1시간에 보낼 수 있는 알림 수 (환경변수 ALERT_LIMIT_PER_HOUR 로 바꿀 수 있음)
+const HOUR_MS = 60 * 60 * 1000
 const WEBHOOK_RE = /^https:\/\/(discord\.com|discordapp\.com)\/api\/webhooks\/\d+\/[\w-]+$/
 
 // 디스코드에 그대로 나가는 글자라서 줄바꿈·서식·멘션을 정리하고 길이를 자른다
@@ -64,6 +66,12 @@ export function createHandler(deps) {
     const created = d.createdAt && typeof d.createdAt.toMillis === 'function' ? d.createdAt.toMillis() : 0
     if (!created || now() - created > MAX_AGE_MS) return send(res, 200, { ok: true, skipped: 'old' })
     if (kind === 'faq' && d.source !== 'user') return send(res, 200, { ok: true, skipped: 'not-user-question' })
+
+    // 알림 폭주 방지: 최근 1시간에 보낸 알림이 상한을 넘으면 더 보내지 않는다.
+    // (신청·후기·질문 자체는 정상 저장되고 /admin 에서 모두 볼 수 있다. 알림만 멈춘다)
+    const limit = Number(env.ALERT_LIMIT_PER_HOUR) > 0 ? Number(env.ALERT_LIMIT_PER_HOUR) : DEFAULT_LIMIT
+    const recent = await db.collection('notifications').where('at', '>=', now() - HOUR_MS).count().get()
+    if (recent.data().count >= limit) return send(res, 200, { ok: true, skipped: 'rate-limit' })
 
     // 같은 문서의 알림은 한 번만: 기록 문서를 만들 수 있었던 요청만 보낸다
     const log = db.collection('notifications').doc(`${kind}_${id}`)

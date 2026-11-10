@@ -11,6 +11,9 @@ function fakeDb(docs) {
     logs,
     collection(name) {
       return {
+        where(_f, _op, since) {
+          return { count: () => ({ get: async () => ({ data: () => ({ count: [...logs.values()].filter((l) => l.at >= since).length }) }) }) }
+        },
         doc(id) {
           return {
             async get() { const v = (docs[name] || {})[id]; return { exists: !!v, data: () => v } },
@@ -22,9 +25,10 @@ function fakeDb(docs) {
     },
   }
 }
-function run({ docs, body, method = 'POST', origin, fetchResult, env = {} }) {
+function run({ docs, body, method = 'POST', origin, fetchResult, env = {}, preLogs = [] }) {
   const sent = []
   const db = fakeDb(docs)
+  preLogs.forEach((l, i) => db.logs.set('pre' + i, l))
   const handler = createHandler({
     getDb: async () => db,
     fetchFn: async (url, opt) => { sent.push({ url, body: JSON.parse(opt.body) }); return fetchResult ?? { ok: true } },
@@ -85,4 +89,15 @@ r = await run({ docs: docs(), body: { kind: 'application', id: 'A1' }, env: { DI
 r = await run({ docs: docs(), body: { kind: 'application', id: 'A1' }, fetchResult: { ok: false } }); assert.equal(r.res.code, 502); assert.equal(r.db.logs.size, 0); ok('전송 실패 시 502, 재시도 가능')
 // 8 메시지 길이
 assert.ok(buildMessage('faq', { q: 'q'.repeat(500) }, 'F', 'https://s').length < 400); ok('긴 글 자르기')
+// 9 알림 상한
+{
+  const pre = Array.from({ length: 30 }, () => ({ at: NOW - 1000 }))
+  r = await run({ docs: docs(), body: { kind: 'application', id: 'A1' }, preLogs: pre })
+  assert.equal(r.res.json.skipped, 'rate-limit'); assert.equal(r.sent.length, 0); assert.ok(!r.db.logs.has('A1'), '상한 초과분은 기록하지 않음'); ok('1시간 30건 넘으면 알림 중단')
+  const pre29 = Array.from({ length: 29 }, () => ({ at: NOW - 1000 }))
+  r = await run({ docs: docs(), body: { kind: 'application', id: 'A1' }, preLogs: pre29 }); assert.equal(r.sent.length, 1); ok('29건까지는 정상 알림')
+  const old = Array.from({ length: 50 }, () => ({ at: NOW - 2 * 60 * 60 * 1000 }))
+  r = await run({ docs: docs(), body: { kind: 'application', id: 'A1' }, preLogs: old }); assert.equal(r.sent.length, 1); ok('1시간 지난 기록은 세지 않음')
+  r = await run({ docs: docs(), body: { kind: 'application', id: 'A1' }, preLogs: pre29.slice(0, 5), env: { ALERT_LIMIT_PER_HOUR: '5' } }); assert.equal(r.res.json.skipped, 'rate-limit'); ok('환경변수로 상한 조절')
+}
 console.log('ALL', n, 'PASSED')
