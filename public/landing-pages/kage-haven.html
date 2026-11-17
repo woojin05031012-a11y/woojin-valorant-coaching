@@ -1341,7 +1341,7 @@ body .card:nth-child(n) .card-fr{ height:auto !important; aspect-ratio:auto !imp
         <select id="rv-ta"><option value="">선택</option><option>아이언 1</option><option>아이언 2</option><option>아이언 3</option><option>브론즈 1</option><option>브론즈 2</option><option>브론즈 3</option><option>실버 1</option><option>실버 2</option><option>실버 3</option><option>골드 1</option><option>골드 2</option><option>골드 3</option><option>플래티넘 1</option><option>플래티넘 2</option><option>플래티넘 3</option><option>다이아몬드 1</option><option>다이아몬드 2</option><option>다이아몬드 3</option><option>초월자 1</option><option>초월자 2</option><option>초월자 3</option><option>불멸 1</option><option>불멸 2</option><option>불멸 3</option><option>레디언트</option></select><p class="err"></p></div>
       <div class="f full"><label for="rv-text">후기 (10~300자)</label><textarea id="rv-text" rows="4" maxlength="300"></textarea><p class="err"></p></div>
       <div class="f full"><label class="consent" for="rv-consent"><input type="checkbox" id="rv-consent">
-        <span>작성한 후기를 닉네임과 함께 사이트에 공개하는 데 동의합니다. 제출한 후기는 확인 후에 공개됩니다.</span></label><p class="err"></p></div>
+        <span>작성한 후기의 닉네임, 별점, 티어 변화, 내용을 사이트에 공개하는 데 동의합니다. 제출한 후기는 확인 후에 공개됩니다.</span></label><p class="err"></p></div>
       <div class="f full"><button class="cta apply-btn" type="submit"><i></i><span>후기 남기기</span></button>
         <p class="apply-status" id="rv-status" role="status" aria-live="polite"></p></div>
     </form>
@@ -5014,7 +5014,7 @@ else addEventListener('DOMContentLoaded', boot);
     pending = String(Date.now()) + Math.random();
     window.parent.postMessage({ type: 'woojin-apply', id: pending, payload: data }, location.origin);
     clearTimeout(timer);
-    timer = setTimeout(function () { if (pending) { pending = null; btn.disabled = false; say('응답이 없습니다. 잠시 뒤 다시 시도해 주세요.', 'bad'); } }, 12000);
+    timer = setTimeout(function () { if (pending) { pending = null; btn.disabled = false; say('응답이 늦어지고 있습니다. 잠시 뒤 다시 시도해 주세요. (이미 접수되었다면 같은 신청이 두 번 들어올 수 있습니다.)', 'bad'); } }, 12000);
   });
   window.addEventListener('message', function (e) {
     var d = e.data;
@@ -5060,9 +5060,9 @@ else addEventListener('DOMContentLoaded', boot);
   var stars = form.querySelector('.stars'), pending = null, timer = 0, tries = 0, got = false, lid = String(Date.now());
   function say(t, cls) { status.textContent = t; status.className = 'apply-status' + (cls ? ' ' + cls : ''); }
   function err(el, m) { var p = el.closest('.f').querySelector('.err'); if (p) p.textContent = m || ''; el.setAttribute('aria-invalid', m ? 'true' : 'false'); }
-  function render(items) {
+  function render(items, failed) {
     list.textContent = '';
-    if (!items.length) { var e = document.createElement('li'); e.className = 'rev-empty'; e.textContent = '아직 공개된 후기가 없습니다. 코칭을 받으신 분은 아래에서 후기를 남겨 주세요.'; list.appendChild(e); return; }
+    if (!items.length) { var e = document.createElement('li'); e.className = 'rev-empty'; e.textContent = failed ? '후기를 불러오지 못했습니다. 페이지를 새로고침해 주세요.' : '아직 공개된 후기가 없습니다. 코칭을 받으신 분은 아래에서 후기를 남겨 주세요.'; list.appendChild(e); return; }
     items.forEach(function (r) {
       var li = document.createElement('li'), st = document.createElement('div'), n = Math.max(1, Math.min(5, r.rating | 0));
       st.className = 'rev-star'; st.setAttribute('aria-label', '별점 5점 중 ' + n + '점');
@@ -5078,7 +5078,7 @@ else addEventListener('DOMContentLoaded', boot);
     if (got || window.parent === window) { if (window.parent === window) render([]); return; }
     window.parent.postMessage({ type: 'woojin-reviews-get', id: lid }, location.origin);
     if (++tries < 4) setTimeout(ask, 1500 * tries);
-    else if (!got) { list.textContent = ''; var e = document.createElement('li'); e.className = 'rev-empty'; e.textContent = '후기를 불러오지 못했습니다.'; list.appendChild(e); }
+    else if (!got) { list.textContent = ''; var e = document.createElement('li'); e.className = 'rev-empty'; e.textContent = '후기를 불러오지 못했습니다. 페이지를 새로고침해 주세요.'; list.appendChild(e); }
   }
   ask();
   var tg = document.getElementById('rv-toggle');
@@ -5105,11 +5105,11 @@ else addEventListener('DOMContentLoaded', boot);
     pending = String(Date.now()) + Math.random();
     window.parent.postMessage({ type: 'woojin-review', id: pending, payload: { nick: nick, rating: parseInt(chk.value, 10), tierBefore: tbEl.value, tierAfter: taEl.value, text: text } }, location.origin);
     clearTimeout(timer);
-    timer = setTimeout(function () { if (pending) { pending = null; btn.disabled = false; say('응답이 없습니다. 잠시 뒤 다시 시도해 주세요.', 'bad'); } }, 12000);
+    timer = setTimeout(function () { if (pending) { pending = null; btn.disabled = false; say('응답이 늦어지고 있습니다. 잠시 뒤 다시 시도해 주세요. (이미 접수되었다면 같은 후기가 두 번 들어올 수 있습니다.)', 'bad'); } }, 12000);
   });
   window.addEventListener('message', function (e) {
     var d = e.data; if (e.origin !== location.origin || !d) return;
-    if (d.type === 'woojin-reviews-result' && d.id === lid) { got = true; render(Array.isArray(d.items) ? d.items : []); return; }
+    if (d.type === 'woojin-reviews-result' && d.id === lid) { got = true; render(Array.isArray(d.items) ? d.items : [], !!d.error); return; }
     if (d.type !== 'woojin-review-result' || d.id !== pending) return;
     pending = null; clearTimeout(timer); btn.disabled = false;
     if (d.ok) { say('후기가 접수되었습니다. 확인 후 공개됩니다. 감사합니다.', 'ok'); form.reset(); }
@@ -5174,7 +5174,7 @@ else addEventListener('DOMContentLoaded', boot);
     pending = 'q' + Date.now() + Math.random();
     post({ type: 'woojin-faq-ask', id: pending, payload: { q: q } });
     clearTimeout(askTimer);
-    askTimer = setTimeout(function () { if (pending) { pending = null; b.disabled = false; say('응답이 없습니다. 잠시 뒤 다시 시도해 주세요.', 'bad'); } }, 12000);
+    askTimer = setTimeout(function () { if (pending) { pending = null; b.disabled = false; say('응답이 늦어지고 있습니다. 잠시 뒤 다시 시도해 주세요.', 'bad'); } }, 12000);
   });
   window.addEventListener('message', function (e) {
     var d = e.data; if (e.origin !== location.origin || !d) return;

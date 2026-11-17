@@ -49,6 +49,16 @@ function notify(kind, id) {
   } catch (err) { /* 알림 실패는 무시 */ }
 }
 
+// 저장 실패 때 방문자에게 보여 줄 문구. 원인 코드는 콘솔에만 남긴다.
+function saveFailMessage(err) {
+  console.error('[save failed]', err)
+  const c = (err && err.code) || ''
+  if (c === 'unavailable' || c === 'deadline-exceeded') return '인터넷 연결이 불안정해 저장하지 못했습니다. 연결을 확인하고 다시 시도해 주세요.'
+  if (c === 'resource-exhausted') return '지금 요청이 많아 저장하지 못했습니다. 잠시 뒤 다시 시도해 주세요.'
+  if (c === 'permission-denied') return '저장하지 못했습니다. 입력 내용을 확인하고 다시 시도해 주세요..'
+  return '저장하지 못했습니다. 잠시 뒤 다시 시도해 주세요..'
+}
+
 export default function KageLanding() {
   const q = new URLSearchParams(window.location.search)
   const src = q.get('original') === '1' ? '/landing-pages/kage.html'
@@ -66,7 +76,7 @@ export default function KageLanding() {
       if (d.type === 'woojin-apply') {
         const data = clean(d.payload)
         if (!data) return send({ type: 'woojin-apply-result', ok: false, message: '입력 내용을 다시 확인해 주세요.' })
-        if (!configured) return send({ type: 'woojin-apply-result', ok: false, message: 'Firebase 설정(.env)이 없어 저장할 수 없습니다.' })
+        if (!configured) return send({ type: 'woojin-apply-result', ok: false, message: '지금은 저장할 수 없습니다. 잠시 뒤 다시 시도해 주세요.' })
         try {
           const ref = await addDoc(collection(db, 'applications'), {
             ...data, status: '접수', createdAt: serverTimestamp(), updatedAt: serverTimestamp(),
@@ -74,14 +84,14 @@ export default function KageLanding() {
           notify('application', ref.id)
           send({ type: 'woojin-apply-result', ok: true, ref: ref.id })
         } catch (err) {
-          send({ type: 'woojin-apply-result', ok: false, message: '저장 실패: ' + (err.code || err.message) })
+          send({ type: 'woojin-apply-result', ok: false, message: saveFailMessage(err) })
         }
         return
       }
 
       // ---- 후기 목록(승인된 것만) / 후기 저장
       if (d.type === 'woojin-reviews-get') {
-        if (!configured) return send({ type: 'woojin-reviews-result', items: [] })
+        if (!configured) return send({ type: 'woojin-reviews-result', items: [], error: true })
         try {
           const snap = await getDocs(query(collection(db, 'reviews'), where('approved', '==', true), limit(30)))
           const items = snap.docs
@@ -94,27 +104,28 @@ export default function KageLanding() {
             }))
           send({ type: 'woojin-reviews-result', items })
         } catch (err) {
-          send({ type: 'woojin-reviews-result', items: [] })
+          console.error('[reviews load failed]', err)
+          send({ type: 'woojin-reviews-result', items: [], error: true })
         }
         return
       }
       if (d.type === 'woojin-review') {
         const data = cleanReview(d.payload)
         if (!data) return send({ type: 'woojin-review-result', ok: false, message: '입력 내용을 다시 확인해 주세요.' })
-        if (!configured) return send({ type: 'woojin-review-result', ok: false, message: 'Firebase 설정(.env)이 없어 저장할 수 없습니다.' })
+        if (!configured) return send({ type: 'woojin-review-result', ok: false, message: '지금은 저장할 수 없습니다. 잠시 뒤 다시 시도해 주세요.' })
         try {
           const ref = await addDoc(collection(db, 'reviews'), { ...data, approved: false, createdAt: serverTimestamp() })
           notify('review', ref.id)
           send({ type: 'woojin-review-result', ok: true })
         } catch (err) {
-          send({ type: 'woojin-review-result', ok: false, message: '저장 실패: ' + (err.code || err.message) })
+          send({ type: 'woojin-review-result', ok: false, message: saveFailMessage(err) })
         }
         return
       }
 
       // ---- FAQ: 게시된 것을 읽어 통계 순으로 정렬해 돌려준다 (최대 100개)
       if (d.type === 'woojin-faqs-get') {
-        if (!configured) return send({ type: 'woojin-faqs-result', items: [] })
+        if (!configured) return send({ type: 'woojin-faqs-result', items: [], error: true })
         try {
           const snap = await getDocs(query(collection(db, 'faqs'), where('published', '==', true), limit(100)))
           const items = snap.docs
@@ -124,7 +135,8 @@ export default function KageLanding() {
             .map((x) => ({ id: x.id, q: x.q, a: x.a, views: Number(x.views) || 0, votes: Number(x.votes) || 0 }))
           send({ type: 'woojin-faqs-result', items })
         } catch (err) {
-          send({ type: 'woojin-faqs-result', items: [] })
+          console.error('[faqs load failed]', err)
+          send({ type: 'woojin-faqs-result', items: [], error: true })
         }
         return
       }
@@ -142,7 +154,7 @@ export default function KageLanding() {
       if (d.type === 'woojin-faq-ask') {
         const text = typeof d.payload?.q === 'string' ? d.payload.q.trim() : ''
         if (text.length < 5 || text.length > 200) return send({ type: 'woojin-faq-ask-result', ok: false, message: '질문은 5~200자로 적어 주세요.' })
-        if (!configured) return send({ type: 'woojin-faq-ask-result', ok: false, message: 'Firebase 설정(.env)이 없어 저장할 수 없습니다.' })
+        if (!configured) return send({ type: 'woojin-faq-ask-result', ok: false, message: '지금은 저장할 수 없습니다. 잠시 뒤 다시 시도해 주세요.' })
         try {
           const ref = await addDoc(collection(db, 'faqs'), {
             q: text, a: '', views: 0, votes: 0, published: false, source: 'user', createdAt: serverTimestamp(),
@@ -150,7 +162,7 @@ export default function KageLanding() {
           notify('faq', ref.id)
           send({ type: 'woojin-faq-ask-result', ok: true })
         } catch (err) {
-          send({ type: 'woojin-faq-ask-result', ok: false, message: '저장 실패: ' + (err.code || err.message) })
+          send({ type: 'woojin-faq-ask-result', ok: false, message: saveFailMessage(err) })
         }
       }
     }
