@@ -440,6 +440,7 @@ h1,h2,h3{ font-weight:400; margin:0; letter-spacing:-.005em; }
 .foot ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:9px; }
 .foot li a{ font-size:13px; color:#8f9a93; transition:color .35s; }
 .foot li a:hover{ color:var(--bone); }
+.foot-logo{ width:34px; height:34px; display:block; border-radius:50%; }
 .foot-brand p{ margin:16px 0 0; max-width:34ch; font-size:13px; color:#79847e; }
 .foot-base{ display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap;
   margin-top:clamp(38px,6vh,74px); padding-top:20px; border-top:1px solid var(--line-soft);
@@ -626,7 +627,7 @@ body[data-layout-footer="b"] .foot-brand{
   grid-column:1 / -1; display:grid; grid-template-columns:70px minmax(0,1fr); align-items:center;
   padding-bottom:34px; margin-bottom:8px; border-bottom:1px solid var(--line-soft);
 }
-body[data-layout-footer="b"] .foot-brand svg{ width:54px; height:54px; }
+body[data-layout-footer="b"] .foot-brand .foot-logo{ width:54px; height:54px; display:block; border-radius:50%; }
 body[data-layout-footer="b"] .foot-brand p{
   margin:0; max-width:48ch; font-size:clamp(18px,2vw,30px); line-height:1.35; color:var(--bone-dim);
 }
@@ -1402,10 +1403,7 @@ body .card:nth-child(n) .card-fr{ height:auto !important; aspect-ratio:auto !imp
   </div>
   <div class="foot-grid">
     <div class="foot-brand">
-      <svg viewBox="0 0 44 44" fill="none" width="34" height="34" aria-hidden="true">
-        <circle cx="22" cy="25" r="8.6" fill="#ff4655" fill-opacity=".9"/>
-        <path d="M5 13h34M9 18.4h26M22 8.5v27" stroke="#dfe7e0" stroke-width="1.5"/>
-      </svg>
+      <img class="foot-logo" src="woojin-logo.png" alt="" width="54" height="54" loading="lazy" decoding="async">
       <p>발로란트 레디언트 이우진의 1:1 개인 코칭 홍보·신청 사이트입니다.</p>
     </div>
     <div><h4>메뉴</h4><ul>
