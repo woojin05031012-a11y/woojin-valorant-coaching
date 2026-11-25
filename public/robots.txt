@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://woojin-valorant-coaching.vercel.app/sitemap.xml

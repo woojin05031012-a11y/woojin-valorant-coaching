@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { collection, addDoc, getDocs, query, where, limit, doc, updateDoc, increment, serverTimestamp } from 'firebase/firestore'
 import { db, configured } from '../firebase.js'
 import { faqScore } from '../faq.js'
+import { usePageMeta } from '../seo.js'
 
 // / 와 /kage → 밤의 사원 버전(kage-haven.html), ?style=tactical → 전술 맵 버전, /kage?original=1 → ThreeUI 원본(kage.html, 무수정)
 // 신청 폼·후기 폼·FAQ는 iframe 안에 있고, postMessage로 이 컴포넌트에 요청을 보낸다.
@@ -59,7 +60,14 @@ function saveFailMessage(err) {
   return '저장하지 못했습니다. 잠시 뒤 다시 시도해 주세요..'
 }
 
+const SR_ONLY = { position: 'absolute', width: 1, height: 1, margin: -1, padding: 0, overflow: 'hidden', clip: 'rect(0 0 0 0)', whiteSpace: 'nowrap', border: 0 }
+
 export default function KageLanding() {
+  usePageMeta({
+    title: '이우진 발로란트 1대1 코칭',
+    description: '레디언트 이우진의 발로란트 1대1 코칭. 1회 1시간, 25,000원. 신청 방법, 진행 방식, 후기를 확인하세요.',
+    path: '/',
+  })
   const q = new URLSearchParams(window.location.search)
   const src = q.get('original') === '1' ? '/landing-pages/kage.html'
     : q.get('style') === 'tactical' ? '/landing-pages/kage-valorant.html'
@@ -172,6 +180,12 @@ export default function KageLanding() {
 
   return (
     <div style={{ position: 'fixed', inset: 0, overflow: 'hidden', background: '#05070a' }}>
+      {/* 화면 속 내용을 글로 옮겨 둔 것 (스크린 리더와 검색엔진이 읽는다) */}
+      <div style={SR_ONLY}>
+        <h1>이우진 발로란트 1대1 코칭</h1>
+        <p>발로란트 유튜버 이우진의 1:1 개인 코칭입니다. 1회 1시간, 가격은 25,000원입니다.</p>
+        <p>진행 방식은 실시간 랭크, 리플레이, 녹화본 세 가지이며, 신청 후 당일에서 24시간 이내에 Discord로 연락드립니다. 일정 변경은 코칭 이틀 전까지 가능합니다.</p>
+      </div>
       <iframe
         title="Woojin VALORANT Coaching"
         src={src}

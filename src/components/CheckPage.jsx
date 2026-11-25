@@ -2,6 +2,7 @@ import { Fragment, useEffect, useState } from 'react'
 import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore'
 import { db, configured } from '../firebase.js'
 import { pageCss, fmtDate, statusClass } from './pageStyle.js'
+import { usePageMeta } from '../seo.js'
 
 // /check : 신청 번호로 내 신청 내용을 확인하고, 아직 '접수' 상태일 때는 수정하거나 취소할 수 있다.
 // 로그인이 없으므로 신청 번호(문서 ID, 추측할 수 없는 긴 문자열)가 열쇠 역할을 한다.
@@ -17,6 +18,7 @@ const FIELDS = [
 const CODE_RE = /^[A-Za-z0-9]{10,40}$/
 
 export default function CheckPage() {
+  usePageMeta({ title: '신청 확인·수정 | 이우진 발로란트 1대1 코칭', path: '/check', noindex: true })
   const [code, setCode] = useState(new URLSearchParams(window.location.search).get('code') || '')
   const [app, setApp] = useState(null)
   const [vals, setVals] = useState({})

@@ -6,6 +6,7 @@ import {
 import { auth, db, configured, googleProvider, ADMIN_EMAIL } from '../firebase.js'
 import { faqScore } from '../faq.js'
 import { pageCss, fmtDate, STATUSES, statusClass } from './pageStyle.js'
+import { usePageMeta } from '../seo.js'
 
 // /admin : 관리자 페이지. 지정한 Google 계정으로 로그인해야 하고,
 // 실제 권한 검사는 Firestore 보안 규칙(firestore.rules 의 isAdmin)이 한다.
@@ -23,6 +24,7 @@ const SEED_FAQ = [
 const Stars = ({ n }) => <span className="star" aria-label={`별점 ${n}점`}>{'★'.repeat(n)}<s>{'★'.repeat(5 - n)}</s></span>
 
 export default function AdminPage() {
+  usePageMeta({ title: '관리자 | 이우진 발로란트 1대1 코칭', path: '/admin', noindex: true })
   const [user, setUser] = useState(undefined) // undefined: 확인 중
   const [tab, setTab] = useState('apps')
   const [err, setErr] = useState('')
